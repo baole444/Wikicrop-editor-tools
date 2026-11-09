@@ -50,6 +50,8 @@ def parse(title, text):
 
 
 def main():
+    if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+        sys.stdout.reconfigure(encoding="utf-8")
     pages = build_pages()
     problems = []
     print(f"Validating {len(pages)} page bodies against the live parser...\n")

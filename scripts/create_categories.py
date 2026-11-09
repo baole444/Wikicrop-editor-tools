@@ -292,6 +292,8 @@ class Wiki:
 # --------------------------------------------------------------------- main
 
 def main():
+    if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+        sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="Create the Wikicrop category scheme.")
     ap.add_argument("--run", action="store_true",
                     help="actually create pages (default is a dry run)")

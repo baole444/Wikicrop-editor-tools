@@ -6,7 +6,11 @@ Checks the LIVE wiki against what create_categories.py intended:
   * all 41 pages exist, and nothing unexpected was created
   * each sits in the intended parent with the intended sortkey
   * the root lists its children in the intended order (sortkeys working)
-  * every page carries the intended creation summary
+  * each group holds exactly its intended crop subcategories (articles tagged
+    into a group are counted apart, not checked)
+  * every page was created with the intended summary up to its qualifier, the
+    page's English name. The note in brackets after it is not compared, so
+    rewording that note in categories.toml after a run leaves the audit passing.
 """
 
 import json
@@ -19,7 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from create_categories import (API, UA, build_pages, GROUPS, PAGE_TYPES,
-                               MAINTENANCE, CROPS)
+                               MAINTENANCE, CROPS, SUMMARY)
 
 DELAY = 0.5
 
@@ -33,6 +37,8 @@ def api(**params):
 
 
 def main():
+    if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+        sys.stdout.reconfigure(encoding="utf-8")
     pages = build_pages()
     intended = {t: (b, s) for t, b, s in pages}
     problems = []
@@ -111,17 +117,20 @@ def main():
     print("\ncrop categories per group:")
     for name, num, _ in GROUPS:
         r = api(action="query", list="categorymembers",
-                cmtitle=f"Thể loại:{name}", cmlimit=500, cmprop="title")
-        kids = [m["title"] for m in r["query"]["categorymembers"]]
+                cmtitle=f"Thể loại:{name}", cmlimit=500, cmprop="title|ns")
+        members = r["query"]["categorymembers"]
+        kids = [m["title"] for m in members if m["ns"] == 14]   # subcategories only
+        articles = len(members) - len(kids)
         expect = sorted(f"Thể loại:{c[0]}" for c in CROPS if c[4] == name)
         flag = "" if sorted(kids) == expect else "   <-- MISMATCH"
-        print(f"   {num:02d} {name:<28} {len(kids)} crop(s){flag}")
+        print(f"   {num:02d} {name:<28} {len(kids)} crop(s), {articles} other page(s){flag}")
         if sorted(kids) != expect:
             problems.append(f"group {name}: children {sorted(kids)} != {expect}")
         time.sleep(DELAY)
 
     # -- 5. creation summaries --------------------------------------------
     # rvlimit cannot be combined with multiple titles, so one request per page
+    head, tail = SUMMARY.split("{what}")
     bad_summary = 0
     for t in titles:
         r = api(action="query", prop="revisions", rvprop="comment|user",
@@ -132,7 +141,8 @@ def main():
         rev = p.get("revisions", [{}])[0]
         got = rev.get("comment", "")
         exp = intended[p["title"]][1]
-        if got != exp:
+        exp = exp[:len(exp) - len(tail)] if tail else exp   # up to and including the qualifier
+        if not got.startswith(exp) or not (got == exp or got[len(exp)] == " "):
             bad_summary += 1
             problems.append(f"{p['title']}: summary {got!r} != {exp!r}")
         time.sleep(DELAY)
