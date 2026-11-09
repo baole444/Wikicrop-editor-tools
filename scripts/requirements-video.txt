@@ -1,0 +1,5 @@
+# Optional: speech-to-text for scripts/video-transcript/transcribe_video.py.
+# Installed by the setup scripts with -Video (PowerShell) or --video (bash). Large: the speech model
+# itself (about 1.6 GB) is downloaded on first use, not here.
+faster-whisper>=1.1,<2    # Whisper on CTranslate2; decodes video and audio through PyAV, no FFmpeg needed
+av>=11,<19               # PyAV 19 dropped an argument faster-whisper 1.2 passes (metadata_errors)

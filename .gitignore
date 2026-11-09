@@ -1,0 +1,76 @@
+# Wikicrop tools - files a checkout creates when the tools run.
+# The repository holds the tools only: no project data, sheet content, logs or personal settings.
+
+### Personal settings and credentials ###
+# Copy settings.example.toml to settings.local.toml and fill it in: it stays on your machine.
+scripts/settings.*.toml
+!scripts/settings.example.toml
+.env
+.env.*
+*.key
+*.pem
+# pywikibot, if used beside these tools
+user-config.py
+user-password.py
+throttle.ctrl
+apicache*/
+
+### Project data (settings defaults, under the repository root) ###
+data/
+Crops/
+working documents/
+
+### Data files of any kind: sheet snapshots, source workbooks, logs, review tables ###
+*.xlsx
+*.xls
+*.ods
+*.csv
+*.tsv
+
+### Sheet-varieties: blocks built from real sheet content ###
+# Only the example drafts module and the template ship.
+scripts/sheet-varieties/table3_block_*_drafts.py
+!scripts/sheet-varieties/table3_block_example_drafts.py
+scripts/sheet-varieties/fill_table3_block_*.gs
+scripts/sheet-varieties/mock/grid*.json
+scripts/sheet-varieties/mock/mock_after*.json
+scripts/sheet-varieties/mock/mock_log.txt
+
+### Source finder cache and output ###
+scripts/source-finder/.cache/
+scripts/source-finder/out/
+
+### Video transcripts: media and transcripts stay private (see video-transcript/README.md) ###
+*.mp4
+*.m4a
+*.mp3
+*.wav
+*.webm
+*.mkv
+*-transcript.md
+
+### Document export output ###
+*.odt
+*.pdf
+*.wiki
+
+### Python and Node ###
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+node_modules/
+
+### Packaging marker ###
+.wikicrop-submission
+
+### IDEs and OS ###
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini

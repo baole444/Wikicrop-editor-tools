@@ -1,0 +1,5 @@
+# Optional: CUDA 12 libraries for faster-whisper on an NVIDIA GPU (Windows and Linux).
+# Installed by the setup scripts with -Video -Gpu (PowerShell) or --video --gpu (bash). About 1 GB.
+# Needs a current NVIDIA driver only, not the CUDA toolkit.
+nvidia-cublas-cu12
+nvidia-cudnn-cu12>=9,<10

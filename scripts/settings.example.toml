@@ -1,0 +1,19 @@
+# Local settings for the Wikicrop tools. Copy this file to settings.local.toml beside it and fill it in.
+# settings.local.toml is for one machine and one team: keep it out of version control and out of
+# anything you share, as it holds the sheet ID. Environment variables of the same name override it.
+# Every setting is described in project_config.py. Relative paths start at the project root.
+
+WIKICROP_OPERATOR = "ExampleUser"            # your wiki username
+WIKICROP_SHEET_ID = ""                       # from the sheet's URL: .../spreadsheets/d/<ID>/edit
+
+# Where the local data lives. Leave a line out to use the default under data/.
+# WIKICROP_CATALOGUE    = "data/catalogue.xlsx"
+# WIKICROP_SOURCE_BOOKS = "data/source-workbooks"
+# WIKICROP_IMAGES       = "data/variety-images"
+# WIKICROP_LOGS         = "data/logs"
+
+# The two source workbooks with embedded variety images, relative to WIKICROP_SOURCE_BOOKS.
+# CG is the primary (newer) one, CT the fallback.
+[source_workbooks]
+CG = "source-CG.xlsx"
+CT = "source-CT.xlsx"

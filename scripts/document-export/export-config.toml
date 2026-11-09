@@ -1,0 +1,109 @@
+# Wikicrop document export settings
+#
+# Used by md2odt.py (Markdown -> ODT) and odt_finish.py (contents + PDF).
+# Colours are #rrggbb. Font sizes are in pt. Lengths are in cm.
+# Delete a line to fall back to the built-in default.
+
+[paths]
+root = "../.."                  # project root, relative to this file; document paths below start here
+
+[page]
+width  = 21.0                   # A4
+height = 29.7
+margin_top    = 1.8
+margin_bottom = 1.1             # body pages; the footer sits inside the text area above this
+margin_left   = 1.8
+margin_right  = 1.8
+
+[fonts]
+body = "Arial"                  # must cover Vietnamese
+mono = "Consolas"               # code blocks and `inline code`
+
+[sizes]
+body           = 10
+title          = 24
+heading1       = 14.5
+heading2       = 11.8
+heading3       = 10.3
+table          = 8.6
+code           = 8.1
+inline_code    = 8.8
+contents1      = 10.5           # main entries on the cover
+contents2      = 8.8            # sub-entries
+contents3      = 8.2
+contents_label = 9.5
+footer         = 8.5
+
+[colors]
+text                   = "#1a1a1a"
+muted                  = "#5b6670"   # Heading 3, contents sub-entries, footer, contents label
+rule                   = "#c8d0d6"   # table borders, line under Heading 1
+table_header           = "#74a92e"   # the wiki's own logo colour
+table_zebra            = "#fafbfb"   # every other body row
+code_background        = "#f4f6f7"
+code_text              = "#224433"
+inline_code_background = "#f0f2f3"
+link                   = "#1a5490"
+quote_bar              = "#b9c6cf"
+quote_background       = "#f7f9fa"
+
+[style]
+line_spacing  = 135             # % for body text
+heading1_rule = true            # thin line under each Heading 1
+table_zebra   = true            # shade every other table row
+
+[cover]
+contents       = true           # false = title only
+contents_label = "Contents"     # "" for no label
+contents_depth = 2              # 1 = main headers only, 2 = + subsections, 3 = + one more level
+leader         = " "            # between entry and page number; try "." for dot leaders
+
+[footer]
+page_number = true
+align       = "center"          # left | center | right
+start_at    = 1                 # number shown on the first page after the cover
+
+[pdf]
+bookmarks = true                # heading outline in the PDF sidebar
+tagged    = true                # accessible (tagged) PDF
+
+[wiki]                          # md2wiki.py: Markdown -> wikitext page
+base_url = "https://wikicrop.lab.io.vn/wikicrop/index.php/"   # links to this become [[internal links]] (http or https)
+rules    = false                # true = keep --- separators as ---- lines (headings already carry a rule)
+checkbox = "☐"                  # shown in front of each - [ ] checklist item
+contents = false                # false = MediaWiki's own contents (Vector 2022 sidebar, no extra numbers); true = a list at the top instead
+
+# ---------------------------------------------------------------------------
+# Documents built when the scripts run without file arguments.
+# source / odt / pdf_dir are relative to [paths] root.
+# cut = headings to drop, with everything under them (regular expressions).
+# contents_label = this document's contents label, overriding [cover] (e.g. "Mục lục").
+# wiki = where md2wiki.py writes the wikitext version. Documents without it get none.
+
+[[document]]
+source  = "working documents/article-standards/wikicrop-article-standard.md"
+odt     = "working documents/odt/Wikicrop - Article Standard.odt"
+pdf_dir = "working documents/pdf"
+wiki    = "working documents/wikitext/Wikicrop - Article Standard.wiki"
+title   = "Wikicrop article standard"
+
+[[document]]
+source  = "working documents/article-standards/tiêu-chuẩn-viết-bài-wikicrop.md"
+odt     = "working documents/odt/Wikicrop - Tiêu chuẩn viết bài.odt"
+pdf_dir = "working documents/pdf"
+wiki    = "working documents/wikitext/Wikicrop - Tiêu chuẩn viết bài.wiki"
+title   = "Tiêu chuẩn viết bài Wikicrop"
+contents_label = "Mục lục"
+
+[[document]]
+source  = "working documents/article-standards/wikicrop-article-standard-analysis.md"
+odt     = "working documents/odt/Wikicrop - Article Standard Analysis.odt"
+pdf_dir = "working documents/pdf"
+title   = "Wikicrop article standard — analysis"
+
+[[document]]
+source  = "working documents/project-context/wiki-constraints.md"
+odt     = "working documents/odt/Wikicrop - Wiki Constraints.odt"
+pdf_dir = "working documents/pdf"
+title   = "Wikicrop — wiki constraints and technical notes"
+

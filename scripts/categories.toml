@@ -1,0 +1,288 @@
+# Wikicrop category scheme: the pages create_categories.py creates, and validate_categories.py and
+# audit_categories.py check. Writing standard section 7 (Wikicrop:Tiêu chuẩn viết bài on the wiki).
+#
+# Another file can be used with WIKICROP_CATEGORIES (see project_config.py).
+#
+# Page bodies are built from the [templates] below. Placeholders in {braces} are filled per page, as
+# Python str.format does: {num:02d} is the group number with two digits. Text is wikitext, so
+# '''bold''' and ''italic'' work as on the wiki. "\n\n" starts a new paragraph.
+#
+# Pages are created in this order: the two roots, groups, page types, maintenance, crops. A crop's
+# `group` must be the `name` of one of the groups.
+
+# Edit summary for every page. {what} is the page's English qualifier, so a run reads clearly in
+# RecentChanges rather than as 41 identical lines.
+summary = "Create category page: {what} (category scheme, standard section 7)"
+
+[root]
+title = "Thể loại:Cây trồng"
+what = "root category for all crops"
+body = "Thể loại gốc của Bách khoa Cây trồng. Mọi bài viết về cây trồng đều thuộc một trong 13 nhóm bên dưới.\n\nMỗi cây trồng có một thể loại riêng, chứa bài loài, giống và kỹ thuật canh tác và danh sách giống của cây đó.\n\nCác thể loại phục vụ rà soát nội dung nằm riêng tại [[:Thể loại:Bảo trì]]."
+
+[maintenance_root]
+title = "Thể loại:Bảo trì"
+what = "root category for maintenance"
+body = "Các thể loại phục vụ việc rà soát và hoàn thiện nội dung. '''Không phải thể loại nội dung''', không dùng để phân loại cây trồng."
+
+[templates]
+# {name} {num} {en}
+group = "Nhóm {num} trong hệ thống phân nhóm cây trồng: '''{name}''' (''{en}'').\n\nMỗi cây trồng trong nhóm có một thể loại riêng gồm bài loài, các bài về giống và bài cho kỹ thuật canh tác của cây đó.\n\n[[Thể loại:Cây trồng|{num:02d}]]"
+group_what = "crop group {num}, {en}"
+# {name} {desc} {note} {sortkey}
+page_type = "Tất cả các bài viết thuộc loại '''{desc}''', không phân biệt nhóm cây trồng.\n\n{note}\n\n[[Thể loại:Cây trồng|{sortkey}]]"
+# {desc} {sortkey}
+maintenance = "{desc}\n\n[[Thể loại:Bảo trì|{sortkey}]]"
+# {article} {display} {binomial} {note_block} {group}. {note_block} is the crop's note plus a blank line, or nothing.
+crop = "Bài viết về cây [[{article}|{display}]] (''{binomial}''): bài loài, các bài giống, kỹ thuật canh tác và danh sách giống.\n\n{note_block}[[Thể loại:{group}]]"
+
+# The 13 crop groups of the Main Page. `num` is also the sortkey under the root (01-13).
+[[group]]
+name = "Ngũ cốc"
+num = 1
+en = "Cereal Crops"
+
+[[group]]
+name = "Các loại kê"
+num = 2
+en = "Millet Crops"
+
+[[group]]
+name = "Cây họ đậu"
+num = 3
+en = "Pulse Crops"
+
+[[group]]
+name = "Cây dầu ăn"
+num = 4
+en = "Edible Oilseed Crops"
+
+[[group]]
+name = "Cây dầu không ăn được"
+num = 5
+en = "Non-edible Oilseed Crops"
+
+[[group]]
+name = "Cây lấy sợi"
+num = 6
+en = "Fiber Crops"
+
+[[group]]
+name = "Cây thức ăn chăn nuôi"
+num = 7
+en = "Forage Crops"
+
+[[group]]
+name = "Cây lấy đường"
+num = 8
+en = "Sugar Crops"
+
+[[group]]
+name = "Cây củ"
+num = 9
+en = "Tuber Crops"
+
+[[group]]
+name = "Cây kích thích"
+num = 10
+en = "Stimulate Crops"
+
+[[group]]
+name = "Cây dược liệu"
+num = 11
+en = "Medicinal Crops"
+
+[[group]]
+name = "Cây hương liệu"
+num = 12
+en = "Aromatic Crops"
+
+[[group]]
+name = "Cây ăn quả nhiệt đới"
+num = 13
+en = "Tropical fruit crops"
+
+# Page-type categories, under the root. `what` is the edit-summary qualifier.
+[[page_type]]
+name = "Bài loài cây trồng"
+desc = "bài loài cây trồng"
+sortkey = "Z1"
+note = "Bài loài dùng bản mẫu <code>[[Bản mẫu:InfoPlant1|InfoPlant1]]</code>."
+what = "species articles"
+
+[[page_type]]
+name = "Bài giống cây trồng"
+desc = "bài giống cây trồng (cultivar)"
+sortkey = "Z2"
+note = "Bài giống dùng bản mẫu <code>[[Bản mẫu:InfoCropPlant|InfoCropPlant]]</code>."
+what = "cultivar articles"
+
+[[page_type]]
+name = "Kỹ thuật canh tác"
+desc = "kỹ thuật trồng và chăm sóc"
+sortkey = "Z3"
+note = "Tiêu đề bài viết đặt dạng <code>Kỹ thuật trồng và chăm sóc</code> kèm tên cây '''viết thường''', ví dụ <code>Kỹ thuật trồng và chăm sóc sầu riêng</code>."
+what = "cultivation technique articles"
+
+[[page_type]]
+name = "Danh sách giống"
+desc = "danh sách giống"
+sortkey = "Z4"
+note = "Danh sách giống là bản chọn lọc có kèm ngày rà soát; thể loại của cây mới là danh sách đầy đủ."
+what = "cultivar list articles"
+
+# Maintenance categories, under Thể loại:Bảo trì.
+[[maintenance]]
+name = "Bài sơ khai"
+sortkey = "1"
+desc = "Bài viết còn quá ngắn hoặc thiếu các mục bắt buộc theo tiêu chuẩn."
+what = "stub articles"
+
+[[maintenance]]
+name = "Bài thiếu nguồn"
+sortkey = "2"
+desc = "Bài viết có số liệu hoặc nhận định chưa dẫn nguồn. Mọi con số về năng suất, thời vụ, mật độ gieo, lượng phân bón và giá bán đều phải nêu nguồn."
+what = "unsourced articles"
+
+[[maintenance]]
+name = "Bài cần hình ảnh"
+sortkey = "3"
+desc = "Bài viết chưa có hình ảnh riêng, hoặc đang dùng lại hình của loài mà chưa sửa chú thích cho đúng."
+what = "articles needing an image"
+
+# One category per crop. `category` is the category name, `article` the species article's exact title,
+# `display` the link text, `group` its crop group. `note` (optional) explains a title that differs.
+[[crop]]
+category = "Cỏ voi"
+article = "Cỏ voi"
+display = "cỏ voi"
+binomial = "Pennisetum purpureum"
+group = "Cây thức ăn chăn nuôi"
+
+[[crop]]
+category = "Mía"
+article = "Mía"
+display = "mía"
+binomial = "Saccharum officinarum"
+group = "Cây lấy đường"
+
+[[crop]]
+category = "Khoai tây"
+article = "Khoai tây"
+display = "khoai tây"
+binomial = "Solanum tuberosum"
+group = "Cây củ"
+
+[[crop]]
+category = "Khoai lang"
+article = "Khoai lang"
+display = "khoai lang"
+binomial = "Ipomoea batatas"
+group = "Cây củ"
+
+[[crop]]
+category = "Bạc hà"
+article = "Bạc hà"
+display = "bạc hà"
+binomial = "Mentha arvensis"
+group = "Cây hương liệu"
+
+[[crop]]
+category = "Chuối"
+article = "Chuối"
+display = "chuối"
+binomial = "Musa spp."
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Bưởi"
+article = "Bưởi"
+display = "bưởi"
+binomial = "Citrus maxima"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Cam"
+article = "Cam"
+display = "cam"
+binomial = "Citrus spp."
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Dưa hấu"
+article = "Dưa hấu"
+display = "dưa hấu"
+binomial = "Citrullus lanatus"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Xoài"
+article = "Xoài"
+display = "xoài"
+binomial = "Mangifera indica"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Mít"
+article = "Mít"
+display = "mít"
+binomial = "Artocarpus heterophyllus"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Ổi"
+article = "Ổi"
+display = "ổi"
+binomial = "Psidium guajava"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Dừa"
+article = "Dừa"
+display = "dừa"
+binomial = "Cocos nucifera"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Chôm chôm"
+article = "Chôm chôm"
+display = "chôm chôm"
+binomial = "Nephelium lappaceum"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Mận"
+article = "Mận"
+display = "mận"
+binomial = "Syzygium samarangense"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Điều"
+article = "Điều"
+display = "điều"
+binomial = "Anacardium occidentale"
+group = "Cây ăn quả nhiệt đới"
+
+[[crop]]
+category = "Sầu riêng"
+article = "Sầu Riêng"
+display = "sầu riêng"
+binomial = "Durio zibethinus"
+group = "Cây ăn quả nhiệt đới"
+note = "''Bài loài của cây này có tiêu đề [[Sầu Riêng]] (viết hoa chữ R). Tên thể loại dùng dạng viết thường để khớp với các bài giống.''"
+
+[[crop]]
+category = "Măng cụt"
+article = "Cây măng cụt"
+display = "măng cụt"
+binomial = "Garcinia mangostana"
+group = "Cây ăn quả nhiệt đới"
+note = "''Bài loài của cây này có tiêu đề [[Cây măng cụt]]. Tên thể loại bỏ tiền tố \"Cây \" để khớp với các bài giống.''"
+
+[[crop]]
+category = "Khóm"
+article = "Khóm / Dứa"
+display = "khóm (dứa)"
+binomial = "Ananas comosus"
+group = "Cây ăn quả nhiệt đới"
+note = "''Bài loài của cây này có tiêu đề [[Khóm / Dứa]]. Tên thể loại dùng dạng ngắn \"Khóm\".''"

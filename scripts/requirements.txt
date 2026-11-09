@@ -1,0 +1,7 @@
+# Python packages for the Wikicrop tools. Python 3.11 or newer.
+# Install with scripts/setup_env.ps1 (Windows) or scripts/setup_env.sh (Linux, macOS, Git Bash).
+#
+# Most tools use only the standard library. These are needed by:
+openpyxl>=3.1,<4      # reading the catalogue workbook: retrofit_pass, convert_citations, image tools, sheet builders
+Pillow>=10            # image export, hashing and resizing: image tools
+pypdf>=4              # licence pages of Commons PDFs: sheet-images/fetch_commons_images.py
