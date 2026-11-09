@@ -76,11 +76,12 @@ if [ -n "$lo" ] || command -v soffice >/dev/null 2>&1; then
 else
     echo "  LibreOffice  missing - only document-export/odt_finish.py (ODT contents and PDF export) needs it"
 fi
-for t in "pdftotext:PDF text for source-finder/find_sources.py (Poppler)" "curl:fallback download in fetch_live_sheet.py"; do
+for t in "pdftotext:PDF text for source-finder/find_sources.py (Poppler)" "curl:fallback download in fetch_live_sheet.py"          "node:Apps Script tests in sheet-varieties/mock (Node.js)"; do
     name="${t%%:*}"; why="${t#*:}"
     if command -v "$name" >/dev/null 2>&1; then state="found  "; else state="missing"; fi
     printf "  %-12s %s - %s\n" "$name" "$state" "$why"
 done
+echo "  Install links for missing programs: the Setup section of README.en.md, or of README.md in Vietnamese."
 
 echo
 echo "Done. Activate the environment with:  source .venv/bin/activate   (Git Bash: source .venv/Scripts/activate)"

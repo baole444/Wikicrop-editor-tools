@@ -84,12 +84,14 @@ $lo = @("$env:ProgramFiles\LibreOffice\program\python.exe", "${env:ProgramFiles(
 if ($lo) { Write-Host "  LibreOffice  found  ($lo) - needed by document-export\odt_finish.py, run it with that python" }
 else     { Write-Host "  LibreOffice  missing - only document-export\odt_finish.py (ODT contents and PDF export) needs it" }
 foreach ($tool in @(@("pdftotext", "PDF text for source-finder\find_sources.py (Poppler)"),
-                    @("curl", "fallback download in fetch_live_sheet.py"))) {
+                    @("curl", "fallback download in fetch_live_sheet.py"),
+                    @("node", "Apps Script tests in sheet-varieties\mock (Node.js)"))) {
     $found = Get-Command $tool[0] -ErrorAction SilentlyContinue
     $state = if ($found) { "found  " } else { "missing" }
     Write-Host ("  {0,-12} {1} - {2}" -f $tool[0], $state, $tool[1])
 }
 
+Write-Host "  Install links for missing programs: the Setup section of README.en.md, or of README.md in Vietnamese."
 Write-Host ""
 Write-Host "Done. Activate the environment with:  .\.venv\Scripts\Activate.ps1"
 Write-Host "Settings: copy scripts\settings.example.toml to scripts\settings.local.toml and fill it in (see scripts\project_config.py)."

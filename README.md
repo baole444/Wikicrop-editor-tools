@@ -1,18 +1,37 @@
-# Wikicrop tools
+# Công cụ Wikicrop
 
-Tools for maintaining [Wikicrop](http://wikicrop.lab.io.vn/wikicrop/index.php/Main_Page), a MediaWiki
-encyclopedia of crops and crop varieties for Vietnamese growers, and the Google Sheet that holds its
-variety catalogue. They bulk-edit wiki pages to the writing standard, audit the result, move variety
-images from the source workbooks to the sheet and the wiki, and help find sources for the data.
+**Tiếng Việt** | [English](README.en.md)
 
-Section numbers in comments and edit summaries (`standard section 6.6`, `(9.11)`) refer to the writing
-standard on the wiki: [Wikicrop:Tiêu chuẩn viết bài](http://wikicrop.lab.io.vn/wikicrop/index.php/Wikicrop:Tiêu_chuẩn_viết_bài).
+Bộ công cụ bảo trì [Wikicrop](http://wikicrop.lab.io.vn/wikicrop/index.php/Main_Page), bách khoa toàn thư
+MediaWiki về cây trồng và giống cây trồng dành cho người trồng Việt Nam, cùng bảng tính Google Sheet chứa
+danh mục giống. Các công cụ sửa hàng loạt các trang wiki theo tiêu chuẩn viết bài, kiểm tra lại kết quả,
+chuyển hình ảnh giống từ các bảng tính nguồn sang bảng tính dự án và lên wiki, và hỗ trợ tìm nguồn cho dữ liệu.
 
-## Setup
+Số mục trong chú thích mã nguồn và tóm lược sửa đổi (`standard section 6.6`, `(9.11)`) là số mục của tiêu
+chuẩn viết bài trên wiki: [Wikicrop:Tiêu chuẩn viết bài](http://wikicrop.lab.io.vn/wikicrop/index.php/Wikicrop:Tiêu_chuẩn_viết_bài).
 
-Python 3.11 or newer. The setup script makes a virtual environment in `.venv` beside `scripts/` and
-installs the packages in `scripts/requirements.txt` (openpyxl, Pillow, pypdf). It can be run again at
-any time.
+Mã nguồn, chú thích trong mã và hướng dẫn chi tiết của từng công cụ viết bằng tiếng Anh. Bản tiếng Anh của
+tệp này là [README.en.md](README.en.md).
+
+## Cài đặt
+
+### Python và Node.js
+
+- **Python 3.11 trở lên**: tải tại [python.org/downloads](https://www.python.org/downloads/). Trên Windows,
+  chọn "Add python.exe to PATH" ở màn hình cài đặt đầu tiên, hoặc cài bằng lệnh
+  `winget install Python.Python.3.12`. Kiểm tra bằng `python --version`.
+- **Node.js** chỉ cần cho `sheet-varieties/mock/`. Nên cài qua trình quản lý phiên bản Node để đổi phiên bản
+  dễ dàng:
+  - Windows: [nvm-windows](https://github.com/coreybutler/nvm-windows/releases) (tải `nvm-setup.exe`), rồi
+    `nvm install lts` và `nvm use lts`.
+  - macOS, Linux: [nvm](https://github.com/nvm-sh/nvm#installing-and-updating), rồi `nvm install --lts`.
+
+  Kiểm tra bằng `node --version`.
+
+### Môi trường Python
+
+Script cài đặt tạo môi trường ảo `.venv` bên cạnh thư mục `scripts/` và cài các gói
+trong `scripts/requirements.txt` (openpyxl, Pillow, pypdf). Có thể chạy lại bất cứ lúc nào.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\setup_env.ps1
@@ -21,96 +40,98 @@ powershell -ExecutionPolicy Bypass -File scripts\setup_env.ps1
 
 ```bash
 bash scripts/setup_env.sh
-source .venv/bin/activate          # Git Bash on Windows: source .venv/Scripts/activate
+source .venv/bin/activate          # Git Bash trên Windows: source .venv/Scripts/activate
 ```
 
-Options: `-Video` / `--video` adds faster-whisper for the transcript tool, `-Gpu` / `--gpu` with it adds
-the CUDA libraries for an NVIDIA GPU. The script also reports the optional programs it found:
+Tùy chọn: `-Video` / `--video` cài thêm faster-whisper cho công cụ ghi lời video, kèm `-Gpu` / `--gpu` để
+cài thêm thư viện CUDA cho card đồ họa NVIDIA. Script cũng báo các chương trình tùy chọn tìm thấy trên máy:
 
-| Program      | Needed by                                                                        |
-|--------------|----------------------------------------------------------------------------------|
-| LibreOffice  | `document-export/odt_finish.py`, run with LibreOffice's own Python (it has `uno`) |
-| pdftotext    | `source-finder/find_sources.py`, for PDF sources (Poppler)                       |
-| curl         | `fetch_live_sheet.py`, fallback download                                         |
-| Node.js      | `sheet-varieties/mock/`, to test Apps Scripts locally                            |
+| Chương trình | Dùng cho                                                                              |
+|--------------|---------------------------------------------------------------------------------------|
+| [LibreOffice](https://www.libreoffice.org/download/download-libreoffice/) | `document-export/odt_finish.py`, chạy bằng Python đi kèm LibreOffice (có sẵn `uno`)   |
+| pdftotext    | `source-finder/find_sources.py`, để đọc nguồn dạng PDF. Thuộc Poppler: Windows [poppler-windows](https://github.com/oschwartz10612/poppler-windows/releases), macOS `brew install poppler`, Linux `apt install poppler-utils` |
+| curl         | `fetch_live_sheet.py`, cách tải dự phòng. Có sẵn trên Windows 10 trở lên, macOS và hầu hết bản Linux |
+| Node.js      | `sheet-varieties/mock/`, để chạy thử Apps Script trên máy. Cách cài ở trên            |
 
-The Apps Scripts (`.gs`) run in the Google Sheet itself (Extensions → Apps Script), not on your machine.
+Các Apps Script (`.gs`) chạy ngay trong Google Sheet (Tiện ích mở rộng → Apps Script), không chạy trên máy.
 
-## Settings
+## Thiết lập
 
-All paths and addresses are in `scripts/project_config.py`. Set them without editing any tool, in a
-local settings file or as environment variables (which win):
+Mọi đường dẫn và địa chỉ nằm trong `scripts/project_config.py`. Thiết lập chúng mà không cần sửa công cụ
+nào, bằng một tệp thiết lập cục bộ hoặc bằng biến môi trường (biến môi trường được ưu tiên):
 
 ```bash
-cp scripts/settings.example.toml scripts/settings.local.toml     # then fill it in
+cp scripts/settings.example.toml scripts/settings.local.toml     # rồi điền vào
 ```
 
-`settings.local.toml` holds the sheet ID and your own folder layout: keep it out of version control
-and out of anything you share. The ones to set first:
+`settings.local.toml` chứa mã bảng tính và cách bố trí thư mục trên máy của bạn: không đưa tệp này vào quản
+lý phiên bản hay bất cứ thứ gì chia sẻ ra ngoài. Các biến cần đặt trước:
 
-| Variable            | What                                                                       |
-|---------------------|----------------------------------------------------------------------------|
-| `WIKICROP_OPERATOR` | Your wiki username. Sent in the User-Agent, so the wiki's admins can reach whoever runs a bot |
-| `WIKICROP_SHEET_ID` | ID of the project's Google Sheet, from its URL. Needed by `fetch_live_sheet.py` |
-| `WIKICROP_API`      | MediaWiki API endpoint, if the wiki moves                                  |
+| Biến                | Ý nghĩa                                                                                   |
+|---------------------|-------------------------------------------------------------------------------------------|
+| `WIKICROP_OPERATOR` | Tên tài khoản wiki của bạn. Được gửi trong User-Agent để quản trị viên wiki liên hệ được người chạy bot |
+| `WIKICROP_SHEET_ID` | Mã Google Sheet của dự án, lấy từ địa chỉ của bảng tính. Cần cho `fetch_live_sheet.py`     |
+| `WIKICROP_API`      | Địa chỉ API của MediaWiki, khi wiki đổi địa chỉ                                           |
 
-The rest (`WIKICROP_ROOT`, `_CATALOGUE`, `_SOURCE_BOOKS`, `_IMAGES`, `_LOGS`, `_CROPS`, `_CATEGORIES`)
-place the local data, by default under `data/`, and are described in `project_config.py`. The category
-scheme that `create_categories.py` creates is data too, in `scripts/categories.toml`. API keys for the search tools are read from the
-environment as each tool's docstring says. No credential is stored anywhere: wiki logins are prompted for.
+Các biến còn lại (`WIKICROP_ROOT`, `_CATALOGUE`, `_SOURCE_BOOKS`, `_IMAGES`, `_LOGS`, `_CROPS`, `_CATEGORIES`)
+chỉ nơi đặt dữ liệu trên máy, mặc định trong `data/`, và được mô tả trong `project_config.py`. Sơ đồ thể loại
+mà `create_categories.py` tạo cũng là dữ liệu, nằm trong `scripts/categories.toml`. Khóa API của các công cụ
+tìm kiếm được đọc từ biến môi trường như hướng dẫn của từng công cụ. Không lưu thông tin đăng nhập ở đâu cả:
+mật khẩu wiki được hỏi khi chạy.
 
-## Safety model of the wiki tools
+## Nguyên tắc an toàn của các công cụ sửa wiki
 
-Every tool that writes to the wiki follows the same rules:
+Mọi công cụ ghi lên wiki đều theo cùng các quy tắc:
 
-- **Dry run by default.** Nothing is written without `--run`. The dry run needs no login and shows what
-  would change. `--validate` renders the changed pages through the wiki's parser first, where offered.
-- **BotPassword login**, prompted at run time and held only in memory. Create one at
-  `Special:BotPasswords` with the single grant the tool's docstring names.
-- **No lost edits.** Each edit carries the revision it was computed from (`baserevid`), so an edit made
-  meanwhile by someone else stops it. `nocreate` or `createonly` keeps it from making or overwriting pages
-  by mistake. `maxlag` and a fixed delay keep the load on the shared server low.
-- **A CSV log of every page**, and a separate read-only audit script that checks the live wiki
-  against the log afterwards.
+- **Mặc định chỉ chạy thử.** Không ghi gì nếu không có `--run`. Chạy thử không cần đăng nhập và cho thấy
+  những gì sẽ thay đổi. Ở công cụ có `--validate`, các trang đã sửa được hiển thị thử qua bộ phân tích của
+  wiki trước.
+- **Đăng nhập bằng BotPassword**, hỏi khi chạy và chỉ giữ trong bộ nhớ. Tạo tại `Special:BotPasswords` với
+  đúng một quyền mà hướng dẫn của công cụ nêu.
+- **Không mất sửa đổi.** Mỗi lần sửa mang theo mã phiên bản mà nó được tính từ đó (`baserevid`), nên nếu có
+  người khác sửa trang trong lúc đó thì lần sửa bị dừng. `nocreate` hoặc `createonly` ngăn việc vô tình tạo
+  mới hay ghi đè trang. `maxlag` và khoảng nghỉ cố định giữ tải thấp cho máy chủ dùng chung.
+- **Nhật ký CSV cho từng trang**, và một script kiểm tra riêng, chỉ đọc, đối chiếu wiki thật với nhật ký sau
+  khi chạy.
 
-## Tools
+## Công cụ
 
-Each tool's docstring is its manual: run it with `--help`, or read the top of the file.
+Phần chú thích ở đầu mỗi tệp là hướng dẫn sử dụng của công cụ đó: chạy với `--help`, hoặc đọc phần đầu tệp.
 
-**Wiki pages** (bulk edits, each with its audit)
+**Trang wiki** (sửa hàng loạt, mỗi công cụ có công cụ kiểm tra đi kèm)
 
-| Tool | Does |
-|------|------|
-| `create_categories.py`, `validate_categories.py`, `audit_categories.py` | Create the category scheme, check it before, audit it after |
-| `reformat_infoboxes.py`, `audit_infobox_reformat.py` | Infobox calls to one parameter per line |
-| `retrofit_pass.py`, `audit_retrofit_pass.py` | One pass of every mechanical fix a page needs: infobox layout and place, taxonomy, dashes, entities, links, categories |
-| `convert_citations.py`, `audit_citations.py` | Web citations to `{{ChuthichWeb}}` and named `<ref>`s |
-| `fetch_crop_pages.py`, `audit_crop_pages.py` | Copy a crop's pages from the wiki (read-only), and check them against the standard's mechanical rules |
+| Công cụ | Chức năng |
+|---------|-----------|
+| `create_categories.py`, `validate_categories.py`, `audit_categories.py` | Tạo sơ đồ thể loại, kiểm tra trước và sau khi tạo |
+| `reformat_infoboxes.py`, `audit_infobox_reformat.py` | Viết lời gọi hộp thông tin thành mỗi tham số một dòng |
+| `retrofit_pass.py`, `audit_retrofit_pass.py` | Một lượt gồm mọi sửa chữa hình thức một trang cần: bố cục và vị trí hộp thông tin, phân loại học, dấu gạch, ký tự mã hóa, liên kết, thể loại |
+| `convert_citations.py`, `audit_citations.py` | Chuyển trích dẫn web sang `{{ChuthichWeb}}` và `<ref>` có tên |
+| `fetch_crop_pages.py`, `audit_crop_pages.py` | Sao chép các trang của một cây trồng từ wiki (chỉ đọc), và kiểm tra chúng theo các quy tắc hình thức của tiêu chuẩn |
 
-**Variety images**
+**Hình ảnh giống**
 
-| Tool | Does |
-|------|------|
-| `export_variety_images.py` | Export the pictures embedded in the source workbooks, named by catalogue name |
-| `find_image_sources.py` | Find the web page each picture came from, from the row's reference |
-| `reverse_search_images.py` | Reverse image search (Google Cloud Vision) for the rest |
-| `sheet-images/fetch_commons_images.py` | Pictures for rows that had none: Wikimedia Commons first, then cited web pages |
-| `upload_variety_images.py` | Upload them to the wiki, never overwriting or duplicating, with their source cited |
-| `sheet-images/insert_images.gs` | Apps Script: put the pictures into the sheet's image column |
+| Công cụ | Chức năng |
+|---------|-----------|
+| `export_variety_images.py` | Xuất các hình nhúng trong bảng tính nguồn, đặt tên theo tên trong danh mục |
+| `find_image_sources.py` | Tìm trang web gốc của từng hình từ nguồn ghi ở dòng đó |
+| `reverse_search_images.py` | Tìm ngược hình ảnh (Google Cloud Vision) cho các hình còn lại |
+| `sheet-images/fetch_commons_images.py` | Tìm hình cho các dòng chưa có: Wikimedia Commons trước, sau đó các trang web được trích dẫn |
+| `upload_variety_images.py` | Tải hình lên wiki, không ghi đè, không trùng lặp, có ghi nguồn |
+| `sheet-images/insert_images.gs` | Apps Script: đưa hình vào cột hình ảnh của bảng tính |
 
 **Google Sheet**
 
-| Tool | Does |
-|------|------|
-| `fetch_live_sheet.py` | Download the live sheet as .xlsx, checked before it replaces the local copy |
-| `sheet-common/sheet_config.gs` | Apps Script: the sheet's layout and run switches, shared by the scripts that edit it |
-| `sheet-varieties/build_table3_block.py` | Check a batch of drafted texts against a snapshot, then write a review file and the Apps Script that uploads it. Example batch: `table3_block_example_drafts.py` |
-| `sheet-varieties/mock/` | Test an Apps Script against a local copy of the sheet before running it on the real one |
+| Công cụ | Chức năng |
+|---------|-----------|
+| `fetch_live_sheet.py` | Tải bảng tính đang dùng về dạng .xlsx, kiểm tra trước khi thay bản trên máy |
+| `sheet-common/sheet_config.gs` | Apps Script: bố cục bảng tính và các công tắc chạy, dùng chung cho các script sửa bảng tính |
+| `sheet-varieties/build_table3_block.py` | Kiểm tra một đợt nội dung soạn sẵn với bản chụp của bảng tính, rồi viết tệp duyệt và Apps Script để tải lên. Đợt mẫu: `table3_block_example_drafts.py` |
+| `sheet-varieties/mock/` | Chạy thử một Apps Script trên bản sao bảng tính trên máy trước khi chạy trên bảng tính thật |
 
-**Sources and documents**
+**Nguồn và tài liệu**
 
-| Tool | Does |
-|------|------|
-| `source-finder/find_sources.py` | Gather, fetch and rank candidate sources for rows without one, for a person to review |
-| `video-transcript/transcribe_video.py` | Private, timestamped transcript of a recorded programme, for research (see its README) |
-| `document-export/` | Markdown to ODT and PDF, and to wikitext for a wiki page (see its README) |
+| Công cụ | Chức năng |
+|---------|-----------|
+| `source-finder/find_sources.py` | Thu thập, tải và xếp hạng các nguồn ứng viên cho các dòng chưa có nguồn, để người duyệt |
+| `video-transcript/transcribe_video.py` | Bản ghi lời có mốc thời gian của một chương trình đã phát, dùng riêng cho nghiên cứu (xem README của công cụ) |
+| `document-export/` | Chuyển Markdown sang ODT và PDF, và sang wikitext cho trang wiki (xem README của công cụ) |
